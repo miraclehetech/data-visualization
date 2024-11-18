@@ -137,12 +137,16 @@ for file in filenames:
     exec('%s = temp_df.copy()' % file.lower())
     crypto_df.append(temp_df)
 ## plot 
-fig = make_subplots(rows=3, 
-                    cols=2,
-                    shared_xaxes=True,
-                    specs=[[{"rowspan": 2}, {"rowspan": 2}], [{"rowspan": 1}, {"rowspan": 1}] , [{},{}]]
-                    
-                   )
+fig = make_subplots(
+    rows=3, 
+    cols=2,
+    shared_xaxes=True,
+    specs=[
+        [{"rowspan": 2, "colspan": 2}, None],  # First row
+        [None, None],                          # Second row (covered by rowspan)
+        [{"colspan": 1}, {"colspan": 1}]       # Third row
+    ]
+)
 date_buttons = [
     {'step': "all", 'label': "All time"},                                         # 显示所有时间范围的数据
     {'count':  1, 'step': "year", 'stepmode': "backward", 'label': "Last Year"},  # 显示最近一年的数据
@@ -156,7 +160,7 @@ date_buttons = [
 buttons = []
 i = 0
 j=0
-COUNT = 9
+COUNT = 8
 # 蜡烛图
 # 成交量柱状图
 # 价格线图
@@ -204,14 +208,14 @@ for df in crypto_df:
                marker_color='aqua'),
         row=3, 
         col=1)
-    fig.add_trace(
-        go.Scatter(x=df.index, y=df['close'],
-                   mode='lines',
-                   name='close_Price',
-                  showlegend =True,
-                   line=dict(color="red", width=4)),
-        row=1, 
-        col=2)
+    # fig.add_trace(
+    #     go.Scatter(x=df.index, y=df['close'],
+    #                mode='lines',
+    #                name='close_Price',
+    #               showlegend =True,
+    #                line=dict(color="red", width=4)),
+    #     row=1, 
+    #     col=2)
     fig.add_trace(
         go.Scatter(x=df.index, y=df['close_rsi'],
                    mode='lines',
@@ -352,12 +356,12 @@ for i in range(COUNT):
     fig.data[i].visible = True
 fig.layout["xaxis"]["rangeslider"]["visible"] = False
 fig.layout["xaxis2"]["rangeslider"]["visible"] = False
-fig.layout["xaxis5"]["rangeslider"]["visible"] = True
-fig.layout["xaxis6"]["rangeslider"]["visible"] = True
-fig.layout["xaxis5"]["rangeslider"]["borderwidth"] = 4
-fig.layout["xaxis6"]["rangeslider"]["borderwidth"] = 4
-fig.layout["xaxis5"]["rangeslider"]["bordercolor"] = "aqua"
-fig.layout["xaxis6"]["rangeslider"]["bordercolor"] = "aqua"
-fig.layout["yaxis6"]["ticksuffix"] = ""
-fig.layout["yaxis6"]["range"] = [10,100]
+# fig.layout["xaxis5"]["rangeslider"]["visible"] = True
+# fig.layout["xaxis6"]["rangeslider"]["visible"] = True
+# fig.layout["xaxis5"]["rangeslider"]["borderwidth"] = 4
+# fig.layout["xaxis6"]["rangeslider"]["borderwidth"] = 4
+# fig.layout["xaxis5"]["rangeslider"]["bordercolor"] = "aqua"
+# fig.layout["xaxis6"]["rangeslider"]["bordercolor"] = "aqua"
+# fig.layout["yaxis6"]["ticksuffix"] = ""
+# fig.layout["yaxis6"]["range"] = [10,100]
 fig.show()
