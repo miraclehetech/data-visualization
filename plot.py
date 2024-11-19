@@ -138,13 +138,17 @@ for file in filenames:
     crypto_df.append(temp_df)
 ## plot 
 fig = make_subplots(
-    rows=3, 
-    cols=2,
+    rows=7, 
+    cols=4,
     shared_xaxes=True,
     specs=[
-        [{"rowspan": 2, "colspan": 2}, None],  # First row
-        [None, None],                          # Second row (covered by rowspan)
-        [{"colspan": 1}, {"colspan": 1}]       # Third row
+        [{"rowspan": 2, "colspan": 4}, None, None, None],  # 蜡烛图行
+        [None, None, None, None],                          # 被蜡烛图占用的行
+        [{"colspan": 2}, None, {"colspan": 2}, None],      # RSI和成交量行
+        [{"rowspan": 4, "colspan": 4, "type": "domain"}, None, None, None],  # 修改这行，让 treemap 占据整行
+        [None, None, None, None],
+        [None, None, None, None],
+        [None, None, None, None]
     ]
 )
 date_buttons = [
@@ -170,7 +174,11 @@ COUNT = 8
 # RSI低线
 # RSI高线
 
-vis = [False] * len(crypto_names) * COUNT
+vis = [False] * len(crypto_names) * COUNT 
+vis.append(True)
+vis.append(True)
+vis.append(True)
+vis.append(True)
 for df in crypto_df:
     for k in range(COUNT):
         vis[j+k] = True
@@ -208,6 +216,7 @@ for df in crypto_df:
                marker_color='aqua'),
         row=3, 
         col=1)
+    
     # fig.add_trace(
     #     go.Scatter(x=df.index, y=df['close'],
     #                mode='lines',
@@ -223,7 +232,7 @@ for df in crypto_df:
                   showlegend =True,
                    line=dict(color="aquamarine", width=4)),
         row=3, 
-        col=2)
+        col=3)
     fig.add_trace(
         go.Scatter(x=df.index,
                    y=df['low_rsi'],
@@ -233,7 +242,7 @@ for df in crypto_df:
                    showlegend =False,                   
                    line=dict(width=2, color='aqua', dash='dash')),
         row=3, 
-        col=2)
+        col=3)
     fig.add_trace(
         go.Scatter(x=df.index, 
                    y=df['high_rsi'],
@@ -243,7 +252,7 @@ for df in crypto_df:
                    showlegend =False, 
                    line=dict(width=2, color='aqua', dash='dash')),
         row=3, 
-        col=2)
+        col=3)
     fig.add_trace(
         go.Scatter(x=df.index, y=df['ma_7'],
                    mode='lines',
@@ -356,8 +365,7 @@ fig.update_yaxes(
 #     template="plotly_dark"
 # )
 fig.update_layout(
-                  width=1800,
-                  height=900,
+                  autosize=True,
                   font_family   = 'monospace',
                   xaxis         = dict(
                       rangeselector=dict(
@@ -433,4 +441,57 @@ fig.update_xaxes(matches='x')
 # fig.layout["xaxis4"]["rangeslider"]["bordercolor"] = "aqua"
 # fig.layout["yaxis4"]["ticksuffix"] = ""
 # fig.layout["yaxis4"]["range"] = [10,100]
+fig.show()
+
+# 创建网格布局的方块图
+def create_market_overview(crypto_df, filenames):
+    # Prepare data for treemap
+    values = []  # Market values
+    changes = []  # Price changes
+    labels = []  # Crypto symbols
+    colors = []  # Colors based on price change
+    
+    for idx, df in enumerate(crypto_df):
+        if idx >= 8:  # Still limiting to 4 cryptocurrencies
+            break
+        if idx ==1 or idx==2:
+            continue
+        current_price = df['close'].iloc[-1]
+        prev_price = df['close'].iloc[-2]
+        price_change = ((current_price - prev_price) / prev_price) * 100
+        
+        # Get trading volume as market value
+        market_value = df['Volume USD'].iloc[-1]
+        
+        symbol = filenames[idx].split('/')[-1]
+        
+        values.append(market_value)
+        changes.append(price_change)
+        labels.append(f"{symbol}<br>${current_price:.2f}<br>{price_change:+.2f}%")
+        colors.append('#3C6E3C' if price_change > 0 else '#4E3636')  # 使用深绿色和深红色
+        print(price_change)
+        print(market_value)
+        print(labels)
+    # Add treemap
+    fig.add_trace(
+        go.Treemap(
+            labels=labels,
+            parents=[''] * len(labels),
+            values=values,
+            textinfo='label',
+            marker=dict(
+                colors=colors,
+                line=dict(width=2, color='#1a1a1a')  # 深色边框
+            ),
+            hoverinfo='label',
+            textfont=dict(size=14, color='white'),
+        ),
+        row=4, 
+        col=1
+    )
+
+# 在fig.show()之前调用这个函数
+create_market_overview(crypto_df, filenames)
+print(len(fig.data))
+fig.data[104].visible = True
 fig.show()
