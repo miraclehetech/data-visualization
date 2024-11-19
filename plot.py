@@ -359,7 +359,15 @@ fig.update_layout(
                   width=1800,
                   height=900,
                   font_family   = 'monospace',
-                  xaxis         = dict(rangeselector = dict(buttons = date_buttons)),
+                  xaxis         = dict(
+                      rangeselector=dict(
+                          buttons=date_buttons,
+                          y=1.1,
+                          x=0,
+                      ),
+                  ),
+                  xaxis2        = dict(),
+                  xaxis3        = dict(),
                   updatemenus   = [dict(type = 'dropdown',
                                         x = 0.05,
                                         y = 1.108,
@@ -407,7 +415,7 @@ fig.update_layout(
                                         xref = 'paper', yref = "paper",
                                         align = "left")
                   ],
-                template= "plotly_dark"
+                template= "plotly_dark"  # Options include "plotly", "ggplot2", "seaborn", "simple_white", "plotly_white", "presentation", "xgridoff", "ygridoff", "gridon", "gridoff", "none", and "plotly_dark"
                 )    
 for i in range(0,13*COUNT):
     fig.data[i].visible = False
@@ -416,6 +424,8 @@ for i in range(COUNT):
 fig.layout["xaxis"]["rangeslider"]["visible"] = False
 fig.layout["xaxis2"]["rangeslider"]["visible"] = False
 fig.layout["xaxis3"]["rangeslider"]["visible"] = False
+fig.layout['xaxis']['rangeselector']['visible'] = True
+fig.update_xaxes(matches='x')
 # fig.layout["xaxis4"]["rangeslider"]["visible"] = True
 # fig.layout["xaxis3"]["rangeslider"]["borderwidth"] = 4
 # fig.layout["xaxis4"]["rangeslider"]["borderwidth"] = 4
