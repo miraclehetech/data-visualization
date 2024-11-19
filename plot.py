@@ -296,13 +296,72 @@ fig.update_yaxes(
         showgrid = True,
         gridcolor = '#595959',
         ticks = 'outside')
+# fig.update_layout(
+#     width=1120,
+#     height=650,
+#     font_family='monospace',
+#     xaxis=dict(rangeselector=dict(buttons=date_buttons)),
+#     updatemenus=[dict(type='dropdown',
+#                      x=1.0,  # 保持在右侧
+#                      y=1.1,  # 略微调整以保持在顶部
+#                      showactive=True,
+#                      active=2,
+#                      buttons=buttons)],
+#     title=dict(text='<b>Cryptocurrencies Dashboard<b>',
+#                font=dict(color='#FFFFFF', size=22),
+#                x=0.5),  # 居中
+#     font=dict(color="blue"),
+#     annotations=[
+#         dict(text="<b>Choose Cryptocurrency: <b>",
+#              font=dict(size=20, color="#ffffff"),
+#              showarrow=False,
+#              xref='container',  # 改用container参考系
+#              yref='container',
+#              x='95%',          # 使用百分比
+#              y='95%',
+#              align="left"),
+#         dict(text="<b>Candlestick Chart <b>",
+#              font=dict(size=20, color="#ffffff"),
+#              showarrow=False,
+#              xref='container',
+#              yref='container',
+#              x='10%',
+#              y='65%',
+#              align="left"),
+#         dict(text="<b>Price Chart<b>",
+#              font=dict(size=20, color="#ffffff"),
+#              showarrow=False,
+#              xref='container',
+#              yref='container',
+#              x='80%',
+#              y='65%',
+#              align="left"),
+#         dict(text="<b>Volume Traded<b>",
+#              font=dict(size=20, color="#ffffff"),
+#              showarrow=False,
+#              xref='container',
+#              yref='container',
+#              x='10%',
+#              y='15%',
+#              align="left"),
+#         dict(text="<b>Relative Strength Index (RSI)<b>",
+#              font=dict(size=20, color="#ffffff"),
+#              showarrow=False,
+#              xref='container',
+#              yref='container',
+#              x='80%',
+#              y='15%',
+#              align="left")
+#     ],
+#     template="plotly_dark"
+# )
 fig.update_layout(
-                  width=1120,
-                  height=650,
+                  width=1800,
+                  height=900,
                   font_family   = 'monospace',
                   xaxis         = dict(rangeselector = dict(buttons = date_buttons)),
                   updatemenus   = [dict(type = 'dropdown',
-                                        x = 1.0,
+                                        x = 0.05,
                                         y = 1.108,
                                         showactive = True,
                                         active = 2,
@@ -312,27 +371,27 @@ fig.update_layout(
                                        x = 0.50),
                   font          = dict(color="blue"), 
                   annotations   = [
-                                  dict( text = "<b>Choose Cryptocurrency: <b>",
-                                        font = dict(size = 20 , color = "#ffffff"),
-                                        showarrow=False,
-                                        x = 1.02, 
-                                        y = 1.20,
-                                        xref = 'paper', yref = "paper",
-                                        align = "left"),
-                                  dict( text = "<b>Candlestick Chart <b>",
-                                        font = dict(size = 20,  color = "#ffffff"),
-                                        showarrow=False,
-                                        x = 0.12, 
-                                        y = 0.285,
-                                        xref = 'paper', yref = "paper",
-                                        align = "left"),
-                                  dict( text = "<b>Price Chart<b>",
-                                        font = dict(size = 20,  color = "#ffffff"),
-                                        showarrow=False,
-                                        x = 0.82, 
-                                        y = 0.285,
-                                        xref = 'paper', yref = "paper",
-                                        align = "left"),
+                                #   dict( text = "<b>Choose Cryptocurrency: <b>",
+                                #         font = dict(size = 20 , color = "#ffffff"),
+                                #         showarrow=False,
+                                #         x = 0.05, 
+                                #         y = 1.20,
+                                #         xref = 'paper', yref = "paper",
+                                #         align = "left"),
+                                #   dict( text = "<b>Candlestick Chart <b>",
+                                #         font = dict(size = 20,  color = "#ffffff"),
+                                #         showarrow=False,
+                                #         x = 0.12, 
+                                #         y = 0.185,
+                                #         xref = 'paper', yref = "paper",
+                                #         align = "left"),
+                                #   dict( text = "<b>Price Chart<b>",
+                                #         font = dict(size = 20,  color = "#ffffff"),
+                                #         showarrow=False,
+                                #         x = 0.82, 
+                                #         y = 0.185,
+                                #         xref = 'paper', yref = "paper",
+                                #         align = "left"),
                                   dict( text = "<b>Volume Traded<b>",
                                         font = dict(size = 20,  color = "#ffffff"),
                                         showarrow=False,
@@ -356,12 +415,12 @@ for i in range(COUNT):
     fig.data[i].visible = True
 fig.layout["xaxis"]["rangeslider"]["visible"] = False
 fig.layout["xaxis2"]["rangeslider"]["visible"] = False
-# fig.layout["xaxis5"]["rangeslider"]["visible"] = True
-# fig.layout["xaxis6"]["rangeslider"]["visible"] = True
-# fig.layout["xaxis5"]["rangeslider"]["borderwidth"] = 4
-# fig.layout["xaxis6"]["rangeslider"]["borderwidth"] = 4
-# fig.layout["xaxis5"]["rangeslider"]["bordercolor"] = "aqua"
-# fig.layout["xaxis6"]["rangeslider"]["bordercolor"] = "aqua"
-# fig.layout["yaxis6"]["ticksuffix"] = ""
-# fig.layout["yaxis6"]["range"] = [10,100]
+fig.layout["xaxis3"]["rangeslider"]["visible"] = False
+# fig.layout["xaxis4"]["rangeslider"]["visible"] = True
+# fig.layout["xaxis3"]["rangeslider"]["borderwidth"] = 4
+# fig.layout["xaxis4"]["rangeslider"]["borderwidth"] = 4
+# fig.layout["xaxis3"]["rangeslider"]["bordercolor"] = "aqua"
+# fig.layout["xaxis4"]["rangeslider"]["bordercolor"] = "aqua"
+# fig.layout["yaxis4"]["ticksuffix"] = ""
+# fig.layout["yaxis4"]["range"] = [10,100]
 fig.show()
