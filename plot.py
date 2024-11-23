@@ -191,6 +191,7 @@ for df in crypto_df:
     i+=1
     j+=COUNT
     vis = [False] * len(crypto_names)* COUNT
+    vis.extend([True]*4)
 for df in crypto_df:
     print(df.index)
     fig.add_trace(
