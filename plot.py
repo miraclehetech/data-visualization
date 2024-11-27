@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import pandas_datareader.data as web
 from plotly.subplots import make_subplots
-
+import numpy as np
 warnings.filterwarnings('ignore')
 
 ## URLS and names
@@ -142,17 +142,17 @@ for file in filenames:
     crypto_df.append(temp_df)
 ## plot
 fig = make_subplots(
-    rows=5,
-    cols=4,
-    shared_xaxes=True,
-    specs=[
-        [{"rowspan": 2, "colspan": 4}, None, None, None],  # 蜡烛图行
-        [None, None, None, None],  # 被蜡烛图占用的行
-        [{"rowspan": 1, "colspan": 2}, None, {"colspan": 2}, None],  # RSI和成交量行
-        [{"rowspan": 1, "colspan": 4, "type": "domain"}, None, None, None],  # Treemap行
-        [{"rowspan": 1, "colspan": 2, "type": "domain"}, None, {"rowspan": 1, "colspan": 2}, None],  # 饼图和热力图行
-    ],
-    row_heights=[0.25, 0.15, 0.15, 0.2, 0.25]  # 总和为1
+   rows=5,
+   cols=4,
+   shared_xaxes=True,
+   specs=[
+       [{"rowspan": 2, "colspan": 4}, None, None, None],  # 蜡烛图行
+       [None, None, None, None],  # 被蜡烛图占用的行
+       [{"rowspan": 1, "colspan": 2}, None, {"colspan": 1}, {"colspan": 1}],  # RSI、成交量和新的箱线图行
+       [{"rowspan": 1, "colspan": 4, "type": "domain"}, None, None, None],  # Treemap行
+       [{"rowspan": 1, "colspan": 4},None, None,None],  # 饼图和新的气泡图行
+   ],
+#    row_heights=[0.25, 0.15, 0.15, 0.15, 0.15, 0.15]  # 调整行高比例
 )
 date_buttons = [
     {'step': "all", 'label': "All time"},  # 显示所有时间范围的数据
@@ -194,7 +194,7 @@ for df in crypto_df:
     i += 1
     j += COUNT
     vis = [False] * len(crypto_names) * COUNT
-    vis.extend([True] * 4)
+    vis.extend([True] * (112-104))
 for df in crypto_df:
     print(df.index)
     fig.add_trace(
@@ -375,9 +375,93 @@ fig.update_xaxes(matches='x')
 # 创建网格布局的方块图
 def create_market_overview(crypto_df, filenames):
     # Prepare data for treemap
+    # price_changes = []
+    # volumes = []
+    # current_prices = []
+    # labels = []
+    # for idx, df in enumerate(crypto_df):
+    #    if idx >= 8:
+    #        break
+    #    if idx == 1 or idx == 2:
+    #        continue
+           
+    #    current_price = df['close'].iloc[-1]
+    #    prev_price = df['close'].iloc[-2]
+    #    price_change = ((current_price - prev_price) / prev_price) * 100
+    #    volume = df['Volume USD'].iloc[-1]
+       
+    #    price_changes.append(price_change)
+    #    volumes.append(volume)
+    #    current_prices.append(current_price)
+   
+    # fig.add_trace(
+    #     go.Scatter(
+    #         x=price_changes,
+    #         y=current_prices,
+    #         mode='markers',
+    #         marker=dict(
+    #             size=np.array(volumes) / np.max(volumes) * 50,
+    #             color=price_changes,
+    #             colorscale='RdYlGn',
+    #             showscale=True,
+    #         ),
+    #         text=labels,
+    #         hovertemplate="<b>%{text}</b><br>" +
+    #                       "Price Change: %{x:.2f}%<br>" +
+    #                       "Current Price: $%{y:.2f}<br>" +
+    #                       "<extra></extra>",
+    #     ),
+    #     row=5, col=3
+    # )
+
+    # 添加交易量箱线图
+    volume_data = []
+    volume_labels = []
+    labels=[]
+    for idx, df in enumerate(crypto_df):
+       if idx >= 8:
+           break
+       if idx == 1 or idx == 2:
+           continue
+           
+       volume_data.append(df['Volume USD'].values)
+       volume_labels.extend([filenames[idx].split('/')[-1]] * len(df))
+   
+    fig.add_trace(
+        go.Box(
+            y=np.concatenate(volume_data),
+            x=volume_labels,
+            name='Volume Distribution',
+            boxpoints='outliers',
+            marker_color='aqua',
+            line_color='aqua'
+        ),
+        row=3, col=4
+    )
+    # 添加价格趋势分析
+    for idx, df in enumerate(crypto_df):
+        if idx >= 8:
+            break
+        if idx == 1 or idx == 2:
+            continue
+            
+        # 计算价格变化率
+        df['price_change'] = df['close'].pct_change()
+        
+        # 计算波动率
+        df['volatility'] = df['price_change'].rolling(window=20,min_periods=1).std()
+        
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=df['volatility'],
+                name=f'{filenames[idx].split("/")[-1]} Volatility',
+                line=dict(width=1),
+            ),
+            row=5, col=1
+        )
     values = []  # Market values
-    changes = []  # Price changes
-    labels = []  # Crypto symbols
+    changes = []  # Price change
     colors = []  # Colors based on price change
 
     for idx, df in enumerate(crypto_df):
@@ -385,13 +469,13 @@ def create_market_overview(crypto_df, filenames):
             break
         if idx == 1 or idx == 2:
             continue
+
         current_price = df['close'].iloc[-1]
         prev_price = df['close'].iloc[-2]
         price_change = ((current_price - prev_price) / prev_price) * 100
 
         # Get trading volume as market value
         market_value = df['Volume USD'].iloc[-1]
-
         symbol = filenames[idx].split('/')[-1]
 
         values.append(market_value)
@@ -419,52 +503,35 @@ def create_market_overview(crypto_df, filenames):
         row=4,
         col=1
     )
+
     # Pie
-    fig.add_trace(
-        go.Pie(
-        labels=labels,
-        values=values,
-        hoverinfo='label',
-        textfont=dict(size=14, color='white'),
-        hole=0.5,  # Adjust hole size for a donut chart effect
-        marker=dict(line=dict(color='#000000', width=2)),  # Add border to pie slices
-        legend="legend2"
-    ),
-    row=5, col=1
-)
-    # fig.add_trace(
-    # go.Pie(
-    #     labels=labels,
-    #     values=values,
-    #     hoverinfo='label',
-    #     textfont=dict(size=14, color='white'),
-    #     hole=0.5,  # Adjust hole size for a donut chart effect
-    #     marker=dict(line=dict(color='#000000', width=2)),  # Add border to pie slices
-    #     legend = "legend2"
-    # ),
-    # row=5, col=2
+#     fig.add_trace(
+#         go.Pie(
+#         labels=labels,
+#         values=values,
+#         hoverinfo='label',
+#         textfont=dict(size=14, color='white'),
+#         hole=0.5,  # Adjust hole size for a donut chart effect
+#         marker=dict(line=dict(color='#000000', width=2)),  # Add border to pie slices
+#         legend="legend2"
+#     ),
+#     row=5, col=1
+# )
     fig.update_layout(
-        annotations=[
-            *fig.layout.annotations,  # 保留现有的 annotations
-            # 第一个饼图的中心文字
-            dict(
-                text='Volume<br>Distribution',
-                x=0.472/2-0.020,  # 中心位置的x坐标
-                y=0.19/2-0.015,   # 中心位置的y坐标
-                showarrow=False,
-                font=dict(size=10, color='white'),
-                xref='paper',
-                yref='paper'
-            )
-            # 第二个饼图的中心文字
-        ],
-        legend2=dict(
-            font=dict(size=12, color='white'),
-            x=-0.02,  # 默认全局图例在右侧
-            y=0.01,
-            xanchor="left",
-            yanchor="middle"
-        ),
+        # annotations=[
+        #     *fig.layout.annotations,  # 保留现有的 annotations
+        #     # 第一个饼图的中心文字
+        #     dict(
+        #         text='Volume<br>Distribution',
+        #         x=0.472/2-0.020,  # 中心位置的x坐标
+        #         y=0.19/2-0.015,   # 中心位置的y坐标
+        #         showarrow=False,
+        #         font=dict(size=10, color='white'),
+        #         xref='paper',
+        #         yref='paper'
+        #     )
+        #     # 第二个饼图的中心文字
+        # ],
         legend=dict(
             font=dict(size=12, color='white'),
             x=1.02,  # 默认全局图例在右侧
@@ -479,32 +546,36 @@ def create_market_overview(crypto_df, filenames):
     })
     # Add heatmap with adjusted colorbar height
     correlation_matrix = all_df.pivot_table(index='date', columns='symbol', values='close').corr()
-    fig.add_trace(
-        go.Heatmap(
-            z=correlation_matrix.values,
-            x=correlation_matrix.columns,
-            y=correlation_matrix.index,
-            colorscale='Viridis',
-            name='Correlation Heatmap',
-            hoverongaps=False,
-            hovertemplate='<b>x: %{x}</b><br>y: %{y}<br>Correlate: %{z}<br><extra></extra>',
-            colorbar=dict(
-                lenmode='fraction',
-                len=0.3,  # Set this value to match the height of the heatmap
-                x=1.05,  # Adjust the x position of the colorbar
-                y=0.1,  # Adjust the y position of the colorbar
-                xanchor='left',
-                yanchor='middle',
-                tickfont=dict(size=12, color='white')
-            )
-        ),
-        row=5, col=3
-    )
+    # fig.add_trace(
+    #     go.Heatmap(
+    #         z=correlation_matrix.values,
+    #         x=correlation_matrix.columns,
+    #         y=correlation_matrix.index,
+    #         colorscale='Viridis',
+    #         name='Correlation Heatmap',
+    #         hoverongaps=False,
+    #         hovertemplate='<b>x: %{x}</b><br>y: %{y}<br>Correlate: %{z}<br><extra></extra>',
+    #         colorbar=dict(
+    #             lenmode='fraction',
+    #             len=0.3,  # Set this value to match the height of the heatmap
+    #             x=1.05,  # Adjust the x position of the colorbar
+    #             y=0.1,  # Adjust the y position of the colorbar
+    #             xanchor='left',
+    #             yanchor='middle',
+    #             tickfont=dict(size=12, color='white')
+    #         )
+    #     ),
+    #     row=5, col=3
+    # )
 fig.layout['yaxis4']['ticksuffix'] = ''
 fig.layout['yaxis4']['ticks'] = 'outside'
 # 在fig.show()之前调用这个函数
 create_market_overview(crypto_df, filenames)
 print(fig.layout)
-print(fig.data)
-fig.data[104].visible = True
+print(len(fig.data))
+# print(fig.data)
+# fig.data[109].visible = True
+# fig.data[110].visible = True
+# fig.data[111].visible = True
+# fig.data[112].visible = True
 fig.show()
