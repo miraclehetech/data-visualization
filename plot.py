@@ -11,7 +11,9 @@ import plotly.graph_objects as go
 import pandas_datareader.data as web
 from plotly.subplots import make_subplots
 import numpy as np
+from PIL import Image
 warnings.filterwarnings('ignore')
+
 
 ## URLS and names
 urls = ["https://www.cryptodatadownload.com/cdd/Bitfinex_EOSUSD_d.csv",
@@ -503,14 +505,13 @@ def create_market_overview(crypto_df, filenames):
             
         # 计算价格变化率
         df['price_change'] = df['close'].pct_change()
-        
         # 计算波动率
         df['volatility'] = df['price_change'].rolling(window=20,min_periods=1).std()
         
         fig.add_trace(
             go.Scatter(
                 x=df.index,
-                y=df['volatility'],
+                y=df['volatility']*100,
                 name=f'{filenames[idx].split("/")[-1]} Volatility',
                 line=dict(width=1),
             ),
@@ -624,12 +625,46 @@ def create_market_overview(crypto_df, filenames):
     #     ),
     #     row=5, col=3
     # )
+print(fig.layout)
+fig.layout['yaxis3']['ticksuffix'] = ''
+fig.layout['yaxis3']['ticks'] = 'outside'
 fig.layout['yaxis4']['ticksuffix'] = ''
 fig.layout['yaxis4']['ticks'] = 'outside'
+fig.layout['yaxis5']['ticks'] = 'outside'
+fig.layout['yaxis5']['ticksuffix'] = '%'
 # 在fig.show()之前调用这个函数
 create_market_overview(crypto_df, filenames)
-print(fig.layout)
-print(len(fig.data))
+pyLogo = Image.open("pepe.png")
+pyLogo1=Image.open("E:\Aarhus University\simon-s-cat.webp")
+fig.add_layout_image(
+    dict(
+        source=pyLogo,
+        x=1.05,  # Positioning the image at the right
+        y=0,  # Positioning the image at the bottom
+        xref="paper",
+        yref="paper",
+        sizex=0.1,  # Adjust the size as needed
+        sizey=0.1,
+        xanchor="right",
+        yanchor="bottom"
+    )
+)
+# fig.add_layout_image(
+#     dict(
+#         source=pyLogo1,
+#         x=0.05,  # Positioning the image at the right
+#         y=-0.1,  # Positioning the image at the bottom
+#         xref="paper",
+#         yref="paper",
+#         sizex=0.1,  # Adjust the size as needed
+#         sizey=0.1,
+#         xanchor="right",
+#         yanchor="bottom"
+#     )
+# )
+
+# print(fig.layout)
+# print(fig.layout.images)
 # print(fig.data)
 # fig.data[109].visible = True
 # fig.data[110].visible = True
