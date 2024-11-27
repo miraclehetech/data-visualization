@@ -450,7 +450,7 @@ def create_market_overview(crypto_df, filenames):
             dict(
                 text='Volume<br>Distribution',
                 x=0.472/2-0.020,  # 中心位置的x坐标
-                y=0.19/2-0.025,   # 中心位置的y坐标
+                y=0.19/2-0.015,   # 中心位置的y坐标
                 showarrow=False,
                 font=dict(size=10, color='white'),
                 xref='paper',
@@ -459,14 +459,14 @@ def create_market_overview(crypto_df, filenames):
             # 第二个饼图的中心文字
         ],
         legend2=dict(
-            font=dict(size=16, color='white'),
+            font=dict(size=12, color='white'),
             x=-0.02,  # 默认全局图例在右侧
             y=0.01,
             xanchor="left",
             yanchor="middle"
         ),
         legend=dict(
-            font=dict(size=16, color='white'),
+            font=dict(size=12, color='white'),
             x=1.02,  # 默认全局图例在右侧
             y=0.99,
             xanchor="left",
@@ -494,7 +494,8 @@ def create_market_overview(crypto_df, filenames):
                 x=1.05,  # Adjust the x position of the colorbar
                 y=0.1,  # Adjust the y position of the colorbar
                 xanchor='left',
-                yanchor='middle'
+                yanchor='middle',
+                tickfont=dict(size=12, color='white')
             )
         ),
         row=5, col=3
