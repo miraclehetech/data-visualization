@@ -334,22 +334,78 @@ fig.update_layout(
                font=dict(color='#FFFFFF', size=22),
                x=0.50),
     font=dict(color="blue"),
-    annotations=[
-        dict(text="<b>Volume Traded<b>",
-             font=dict(size=20, color="#ffffff"),
-             showarrow=False,
-             x=0.14,
-             y=-0.53,
-             xref='paper', yref="paper",
-             align="left"),
-        dict(text="<b>Relative Strength Index (RSI)<b>",
-             font=dict(size=20, color="#ffffff"),
-             showarrow=False,
-             x=0.94,
-             y=-0.53,
-             xref='paper', yref="paper",
-             align="left")
-    ],
+      annotations=[
+       # 蜡烛图标题
+       dict(
+           text="<b>Price Movement & Trading Analysis</b>",
+           font=dict(size=20, color="#ffffff"),
+           showarrow=False,
+           x=0.5,
+           y=1.05,
+           xref="paper",
+           yref="paper"
+       ),
+       # 成交量图标题
+       dict(
+           text="<b>Volume Traded</b>",
+           font=dict(size=16, color="#ffffff"),
+           showarrow=False,
+           x=0.475/2,
+           y=0.59,
+           xref="paper",
+           yref="paper"
+       ),
+       # RSI指标标题
+       dict(
+           text="<b>Relative Strength Index (RSI)</b>",
+           font=dict(size=16, color="#ffffff"),
+           showarrow=False,
+           x=(0.525+0.7375)/2,
+           y=0.59,
+           xref="paper",
+           yref="paper"
+       ),
+       # 成交量分布箱线图标题
+       dict(
+           text="<b>Volume Distribution</b>",
+           font=dict(size=16, color="#ffffff"),
+           showarrow=False,
+           x=(0.7815+1)/2+0.05,
+           y=0.59,
+           xref="paper",
+           yref="paper"
+       ),
+       # Treemap标题
+       dict(
+           text="<b>Market Overview</b>",
+           font=dict(size=16, color="#ffffff"),
+           showarrow=False,
+           x=0.5,
+           y=0.35,
+           xref="paper",
+           yref="paper"
+       ),
+       # 饼图标题
+    #    dict(
+    #        text="<b>Volume Distribution by Asset</b>",
+    #        font=dict(size=16, color="#ffffff"),
+    #        showarrow=False,
+    #        x=0.15,
+    #        y=0.22,
+    #        xref="paper",
+    #        yref="paper"
+    #    ),
+       # 波动率分析标题
+       dict(
+           text="<b>Price Volatility Analysis</b>",
+           font=dict(size=16, color="#ffffff"),
+           showarrow=False,
+           x=0.5,
+           y=0.16,
+           xref="paper",
+           yref="paper"
+       )
+   ],
     template="plotly_dark"
     # Options include "plotly", "ggplot2", "seaborn", "simple_white", "plotly_white", "presentation", "xgridoff", "ygridoff", "gridon", "gridoff", "none", and "plotly_dark"
 )
