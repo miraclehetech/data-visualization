@@ -150,7 +150,7 @@ fig = make_subplots(
         [None, None, None, None],  # 被蜡烛图占用的行
         [{"rowspan": 1, "colspan": 2}, None, {"colspan": 2}, None],  # RSI和成交量行
         [{"rowspan": 1, "colspan": 4, "type": "domain"}, None, None, None],  # Treemap行
-        [{"rowspan": 1, "colspan": 1, "type": "domain"}, {"rowspan": 1, "colspan": 1, "type": "domain"}, {"rowspan": 1, "colspan": 2}, None],  # 饼图和热力图行
+        [{"rowspan": 1, "colspan": 2, "type": "domain"}, None, {"rowspan": 1, "colspan": 2}, None],  # 饼图和热力图行
     ],
     row_heights=[0.25, 0.15, 0.15, 0.2, 0.25]  # 总和为1
 )
@@ -432,51 +432,41 @@ def create_market_overview(crypto_df, filenames):
     ),
     row=5, col=1
 )
-    fig.add_trace(
-    go.Pie(
-        labels=labels,
-        values=values,
-        hoverinfo='label',
-        textfont=dict(size=14, color='white'),
-        hole=0.5,  # Adjust hole size for a donut chart effect
-        marker=dict(line=dict(color='#000000', width=2)),  # Add border to pie slices
-        legend = "legend2"
-    ),
-    row=5, col=2
-)
+    # fig.add_trace(
+    # go.Pie(
+    #     labels=labels,
+    #     values=values,
+    #     hoverinfo='label',
+    #     textfont=dict(size=14, color='white'),
+    #     hole=0.5,  # Adjust hole size for a donut chart effect
+    #     marker=dict(line=dict(color='#000000', width=2)),  # Add border to pie slices
+    #     legend = "legend2"
+    # ),
+    # row=5, col=2
     fig.update_layout(
         annotations=[
             *fig.layout.annotations,  # 保留现有的 annotations
             # 第一个饼图的中心文字
             dict(
                 text='Volume<br>Distribution',
-                x=0.2125/2-0.025,  # 中心位置的x坐标
-                y=0.152/2,   # 中心位置的y坐标
+                x=0.472/2-0.020,  # 中心位置的x坐标
+                y=0.19/2-0.025,   # 中心位置的y坐标
                 showarrow=False,
-                font=dict(size=12, color='white'),
-                xref='paper',
-                yref='paper'
-            ),
-            # 第二个饼图的中心文字
-            dict(
-                text='Market<br>Share',
-                x=(0.2625+0.475)/2,  # 中心位置的x坐标
-                y=0.152/2,   # 中心位置的y坐标
-                showarrow=False,
-                font=dict(size=12, color='white'),
+                font=dict(size=10, color='white'),
                 xref='paper',
                 yref='paper'
             )
+            # 第二个饼图的中心文字
         ],
         legend2=dict(
-            font=dict(size=8, color='white'),
+            font=dict(size=16, color='white'),
             x=-0.02,  # 默认全局图例在右侧
             y=0.01,
             xanchor="left",
             yanchor="middle"
         ),
         legend=dict(
-            font=dict(size=8, color='white'),
+            font=dict(size=16, color='white'),
             x=1.02,  # 默认全局图例在右侧
             y=0.99,
             xanchor="left",
