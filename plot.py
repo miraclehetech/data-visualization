@@ -377,7 +377,7 @@ fig.update_layout(
        ),
        # Treemap标题
        dict(
-           text="<b>Market Overview</b>",
+           text="<b>Market Overview(in a sequence of volume)</b>",
            font=dict(size=16, color="#ffffff"),
            showarrow=False,
            x=0.5,
@@ -521,7 +521,7 @@ def create_market_overview(crypto_df, filenames):
     colors = []  # Colors based on price change
 
     for idx, df in enumerate(crypto_df):
-        if idx >= 8:  # Still limiting to 4 cryptocurrencies
+        if idx >= 15:  # Still limiting to 4 cryptocurrencies
             break
         if idx == 1 or idx == 2:
             continue
@@ -536,7 +536,7 @@ def create_market_overview(crypto_df, filenames):
 
         values.append(market_value)
         changes.append(price_change)
-        labels.append(f"{symbol}<br>${current_price:.2f}<br>{price_change:+.2f}%")
+        labels.append(f"{symbol}<br>${current_price:.2f}<br>{price_change:+.2f}%<br>{market_value:,.2f}")
         colors.append('#3C6E3C' if price_change > 0 else '#4E3636')  # 使用深绿色和深红色
         print(price_change)
         print(market_value)
@@ -555,6 +555,7 @@ def create_market_overview(crypto_df, filenames):
             ),
             hoverinfo='label',
             textfont=dict(size=14, color='white'),
+            sort=True  # Sort the treemap by values
         ),
         row=4,
         col=1
